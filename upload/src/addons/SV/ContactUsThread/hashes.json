@@ -1,3 +1,4 @@
 {
-    "src/addons/SV/ContactUsThread/addon.json": "335aa068a851a1dddda0f016102fee6b8e753e298a9070c6516b35ed4eabc09a"
+    "src/addons/SV/ContactUsThread/addon.json": "335aa068a851a1dddda0f016102fee6b8e753e298a9070c6516b35ed4eabc09a",
+    "src/addons/SV/ContactUsThread/XF/Service/Contact.php": "c52286d3a0049811ea601457af19a1560eeb36612850b1ee62769d05df9a174f"
 }
