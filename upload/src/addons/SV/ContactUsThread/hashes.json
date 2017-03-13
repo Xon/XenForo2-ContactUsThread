@@ -1,4 +1,8 @@
 {
-    "src/addons/SV/ContactUsThread/addon.json": "0920f34bdfec45f552ed6ac13c1cfe8bacf45e166067b9ce4aa01a008da421d9",
-    "src/addons/SV/ContactUsThread/XF/Service/Contact.php": "c52286d3a0049811ea601457af19a1560eeb36612850b1ee62769d05df9a174f"
+    "src/addons/SV/ContactUsThread/addon.json": "caa1eb2ee10cbab4186546983ead102de478d452f18402e31384d261264a9ab7",
+    "src/addons/SV/ContactUsThread/XF/Service/Contact.php": "c52286d3a0049811ea601457af19a1560eeb36612850b1ee62769d05df9a174f",
+    "src/addons/SV/ContactUsThread/_data/class_extensions.xml": "d326e4e588717f1d7f8a01156ee62ca6c7c4dacfbff2e69d032e0beb87a56057",
+    "src/addons/SV/ContactUsThread/_data/options.xml": "de36691ab1ddf61db6bac89f99fb0496b73767b7c382f01e0cebbcd7b26f8926",
+    "src/addons/SV/ContactUsThread/_data/option_groups.xml": "c1c30200ff8ad8263d42a176ec34667f3a91f0a29cf33e27a642e3cf9f1351eb",
+    "src/addons/SV/ContactUsThread/_data/phrases.xml": "a115905ee8bbff4d0ed2fe52e2cba94c957544f6331349732e40b80bb14fbdd4"
 }

@@ -1,1 +1,0 @@
-If a user or IP address is discouraged, silently discard the contact.
