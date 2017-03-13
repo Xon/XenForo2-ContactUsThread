@@ -1,0 +1,8 @@
+[plain]
+{message}
+[/plain]
+
+Email: {email}
+
+Latest Spam Trigger Log Matches:
+{spamTriggerLogs}
