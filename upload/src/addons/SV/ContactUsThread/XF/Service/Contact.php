@@ -6,7 +6,7 @@ class Contact extends XFCP_Contact
 {
 	public function validate(&$errors = [])
 	{
-        if ($this->fromName)
+        if ($this->fromUser === null && $this->fromName)
         {
             $validator = $this->app->validator('Username');
             $validator->setOption('check_unique', false);
