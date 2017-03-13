@@ -6,11 +6,15 @@ class Contact extends XFCP_Contact
 {
 	public function validate(&$errors = [])
 	{
-		$validator = $this->app->validator('Username');
-		if (!$validator->isValid($validator['username']))
-		{
-			$errors['username'] = \XF::phrase('');
-		}
+        if ($this->fromName)
+        {
+            $validator = $this->app->validator('Username');
+            $validator->setOption('check_unique', false);
+            if (!$validator->isValid($this->fromName, $errorKey))
+            {
+                $errors['username'] = $validator->getPrintableErrorValue($error);
+            }
+        }
 
 		return parent::validate($errors);
 	}
