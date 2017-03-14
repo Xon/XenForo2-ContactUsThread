@@ -58,6 +58,7 @@ class Contact extends XFCP_Contact
 		$creator->setUser($user);
 		$creator->setPrefix($forum->default_prefix_id);
 		$creator->save();
+		parent::send();
 	}
 
 	protected function _formatLogsForDisplay(array $logs)
