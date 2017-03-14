@@ -12,7 +12,7 @@ class Contact extends XFCP_Contact
             $validator->setOption('check_unique', false);
             if (!$validator->isValid($this->fromName, $errorKey))
             {
-                $errors['username'] = $validator->getPrintableErrorValue($error);
+                $errors['username'] = $validator->getPrintableErrorValue($errorKey);
             }
         }
 
