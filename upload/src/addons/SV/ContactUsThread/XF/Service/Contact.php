@@ -24,40 +24,44 @@ class Contact extends XFCP_Contact
 		$options = $this->app->options();
 		$forum = $this->em()->find('XF:Forum', $options->svContactUsNode);
 
-		$input = [
-			'email' => $this->fromEmail,
-			'subject' => $this->subject,
-			'message' => $this->message,
-			'ip' => $this->fromIp
-		];
-
-		// todo: spam checks
-
-		/** @var \XF\Repository\User $userRepo */
-		$userRepo = $this->repository('XF:User');
-		$visitor = \XF::visitor();
-
-		if ($visitor->user_id)
+		if ($forum)
 		{
-			$user = $visitor;
+			$input = [
+				'email' => $this->fromEmail,
+				'subject' => $this->subject,
+				'message' => $this->message,
+				'ip' => $this->fromIp
+			];
 
-			$message = \XF::phrase('ContactUs_Message_User', $input);
+			// todo: spam checks
+
+			/** @var \XF\Repository\User $userRepo */
+			$userRepo = $this->repository('XF:User');
+			$visitor = \XF::visitor();
+
+			if ($visitor->user_id)
+			{
+				$user = $visitor;
+
+				$message = \XF::phrase('ContactUs_Message_User', $input);
+			}
+			else
+			{
+				$username = $this->fromName;
+				$user = $userRepo->getGuestUser($username);
+
+				$message = \XF::phrase('ContactUs_Message_Guest', $input);
+			}
+
+			/** @var \XF\Service\Thread\Creator $creator */
+			$creator = $this->service('XF:Thread\Creator', $forum);
+
+			$creator->setContent($input['subject'], $message);
+			$creator->setUser($user);
+			$creator->setPrefix($forum->default_prefix_id);
+			$creator->save();
 		}
-		else
-		{
-			$username = $this->fromName;
-			$user = $userRepo->getGuestUser($username);
 
-			$message = \XF::phrase('ContactUs_Message_Guest', $input);
-		}
-
-		/** @var \XF\Service\Thread\Creator $creator */
-		$creator = $this->service('XF:Thread\Creator', $forum);
-
-		$creator->setContent($input['subject'], $message);
-		$creator->setUser($user);
-		$creator->setPrefix($forum->default_prefix_id);
-		$creator->save();
 		parent::send();
 	}
 
