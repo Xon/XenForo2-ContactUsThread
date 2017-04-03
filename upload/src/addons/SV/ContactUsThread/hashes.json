@@ -1,8 +1,11 @@
 {
     "src/addons/SV/ContactUsThread/addon.json": "caa1eb2ee10cbab4186546983ead102de478d452f18402e31384d261264a9ab7",
-    "src/addons/SV/ContactUsThread/XF/Service/Contact.php": "c52286d3a0049811ea601457af19a1560eeb36612850b1ee62769d05df9a174f",
-    "src/addons/SV/ContactUsThread/_data/class_extensions.xml": "d326e4e588717f1d7f8a01156ee62ca6c7c4dacfbff2e69d032e0beb87a56057",
+    "src/addons/SV/ContactUsThread/XF/Entity/User.php": "0a67107b205ce1b4133120d46520065753f97d87f780b22c1f871dab3e8ba89f",
+    "src/addons/SV/ContactUsThread/XF/Pub/Controller/Misc.php": "e4821cecca1a71ba5f9b359d1559a189a099875a1350e306fc50994d4a85059b",
+    "src/addons/SV/ContactUsThread/XF/Service/Contact.php": "67811760dba2f5a3347293fdf14b3194f9c377f1beb9b38a108135c935630b4b",
+    "src/addons/SV/ContactUsThread/XF/Validator/Username.php": "011ce013295a17c9165f31da787e3e530c4283f6110359c42b9bf13753675aef",
+    "src/addons/SV/ContactUsThread/_data/class_extensions.xml": "b2ff8866fadf5bc04e7205a5ca18e9415bc2cf8e0352a50af7da69f589e2aee2",
     "src/addons/SV/ContactUsThread/_data/options.xml": "de36691ab1ddf61db6bac89f99fb0496b73767b7c382f01e0cebbcd7b26f8926",
     "src/addons/SV/ContactUsThread/_data/option_groups.xml": "c1c30200ff8ad8263d42a176ec34667f3a91f0a29cf33e27a642e3cf9f1351eb",
-    "src/addons/SV/ContactUsThread/_data/phrases.xml": "a115905ee8bbff4d0ed2fe52e2cba94c957544f6331349732e40b80bb14fbdd4"
+    "src/addons/SV/ContactUsThread/_data/phrases.xml": "fb29449f6154dddd07c850d50274b9735b5d610513ae606b6399294aaa0b2feb"
 }
