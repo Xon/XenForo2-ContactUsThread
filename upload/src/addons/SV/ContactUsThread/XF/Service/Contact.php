@@ -10,6 +10,7 @@ class Contact extends XFCP_Contact
         {
             $validator = $this->app->validator('Username');
             $validator->setOption('check_unique', false);
+            $validator->setOption('force_next_validator_request', true);
             if (!$validator->isValid($this->fromName, $errorKey))
             {
                 $errors['username'] = $validator->getPrintableErrorValue($errorKey);
