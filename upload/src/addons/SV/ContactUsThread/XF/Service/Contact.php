@@ -41,6 +41,7 @@ class Contact extends XFCP_Contact
             $userRepo = $this->repository('XF:User');
             $visitor = \XF::visitor();
 
+            $title = $input['subject'];
             if ($visitor->user_id)
             {
                 $user = $visitor;
@@ -55,11 +56,10 @@ class Contact extends XFCP_Contact
                 $message = \XF::phrase('ContactUs_Message_Guest', $input);
             }
 
-            $creator = \XF::asVisitor($this->threadAuthor, function () {
+            $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
                 /** @var \XF\Service\Thread\Creator $creator */
                 $creator = $this->service('XF:Thread\Creator', $forum);
-                $creator->setContent($input['subject'], $message);
-                $creator->setUser($user);
+                $creator->setContent($title, $message);
                 $creator->setPrefix($forum->default_prefix_id);
                 $creator->save();
             });
