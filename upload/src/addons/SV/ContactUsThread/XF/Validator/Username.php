@@ -22,6 +22,7 @@ class Username extends XFCP_Username
         if ($key == 'force_next_validator_request')
         {
             self::$nextRequest = true;
+
             return;
         }
         parent::setOption($key, $value);

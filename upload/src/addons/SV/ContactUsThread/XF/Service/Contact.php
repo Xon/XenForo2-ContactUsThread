@@ -4,8 +4,8 @@ namespace SV\ContactUsThread\XF\Service;
 
 class Contact extends XFCP_Contact
 {
-	public function validate(&$errors = [])
-	{
+    public function validate(&$errors = [])
+    {
         if ($this->fromUser === null && $this->fromName)
         {
             $validator = $this->app->validator('Username');
@@ -17,42 +17,43 @@ class Contact extends XFCP_Contact
             }
         }
 
-		return parent::validate($errors);
-	}
+        return parent::validate($errors);
+    }
 
-	public function send()
-	{
-		$options = $this->app->options();
-		$forum = $this->em()->find('XF:Forum', $options->svContactUsNode);
+    public function send()
+    {
+        $options = $this->app->options();
+        /** @var \XF\Entity\Forum $forum */
+        $forum = $this->em()->find('XF:Forum', $options->svContactUsNode);
 
-		if ($forum)
-		{
-			$input = [
-				'email' => $this->fromEmail,
-				'subject' => $this->subject,
-				'message' => $this->message,
-				'ip' => $this->fromIp
-			];
+        if ($forum)
+        {
+            $input = [
+                'email'   => $this->fromEmail,
+                'subject' => $this->subject,
+                'message' => $this->message,
+                'ip'      => $this->fromIp
+            ];
 
-			// todo: spam checks
+            // todo: spam checks
 
-			/** @var \XF\Repository\User $userRepo */
-			$userRepo = $this->repository('XF:User');
-			$visitor = \XF::visitor();
+            /** @var \XF\Repository\User $userRepo */
+            $userRepo = $this->repository('XF:User');
+            $visitor = \XF::visitor();
 
-			if ($visitor->user_id)
-			{
-				$user = $visitor;
+            if ($visitor->user_id)
+            {
+                $user = $visitor;
 
-				$message = \XF::phrase('ContactUs_Message_User', $input);
-			}
-			else
-			{
-				$username = $this->fromName;
-				$user = $userRepo->getGuestUser($username);
+                $message = \XF::phrase('ContactUs_Message_User', $input);
+            }
+            else
+            {
+                $username = $this->fromName;
+                $user = $userRepo->getGuestUser($username);
 
-				$message = \XF::phrase('ContactUs_Message_Guest', $input);
-			}
+                $message = \XF::phrase('ContactUs_Message_Guest', $input);
+            }
 
             $creator = \XF::asVisitor($this->threadAuthor, function () {
                 /** @var \XF\Service\Thread\Creator $creator */
@@ -63,65 +64,65 @@ class Contact extends XFCP_Contact
                 $creator->save();
             });
             $creator->sendNotifications();
-		}
+        }
 
-		parent::send();
-	}
+        parent::send();
+    }
 
-	protected function _formatLogsForDisplay(array $logs)
-	{
-		if (!empty($logs))
-		{
-			$logOutput = "[LIST]\n";
+    protected function _formatLogsForDisplay(array $logs)
+    {
+        if (!empty($logs))
+        {
+            $logOutput = "[LIST]\n";
 
-			foreach ($logs as $log)
-			{
-				$time = \XF::language()->time($log['log_date'], 'absolute');
-				$logOutput .= "[*]{$time}: ";
+            foreach ($logs as $log)
+            {
+                $time = \XF::language()->time($log['log_date'], 'absolute');
+                $logOutput .= "[*]{$time}: ";
 
-				if ($log['username'])
-				{
-					$logOutput .= "@{$log['username']} ";
-				}
-				else
-				{
-					$logOutput .= \XF::phrase('unknown_account').' ';
-				}
+                if ($log['username'])
+                {
+                    $logOutput .= "@{$log['username']} ";
+                }
+                else
+                {
+                    $logOutput .= \XF::phrase('unknown_account') . ' ';
+                }
 
-				$logOutput .= ' - ';
+                $logOutput .= ' - ';
 
-				if ($log['result'] ==  'denied')
-				{
-					$result = \XF::phrase('rejected');
-				}
-				elseif ($log['result'] == 'moderated')
-				{
-					$result = \XF::phrase('moderated');
-				}
-				else
-				{
-					$result = $log['result'];
-				}
+                if ($log['result'] == 'denied')
+                {
+                    $result = \XF::phrase('rejected');
+                }
+                else if ($log['result'] == 'moderated')
+                {
+                    $result = \XF::phrase('moderated');
+                }
+                else
+                {
+                    $result = $log['result'];
+                }
 
-				$logOutput .= $result;
+                $logOutput .= $result;
 
-				foreach ($log['detailsPrintable'] as $detail)
-				{
-					$logOutput .= " ({$detail})";
-				}
+                foreach ($log['detailsPrintable'] as $detail)
+                {
+                    $logOutput .= " ({$detail})";
+                }
 
-				$logOutput .= "\n";
-			}
+                $logOutput .= "\n";
+            }
 
-			$logOutput .= '[/LIST]';
-		}
-		else
-		{
-			$logOutput = \XF::phrase(
-				'sv_contactusthread_no_matching_spam_trigger_logs'
-			);
-		}
+            $logOutput .= '[/LIST]';
+        }
+        else
+        {
+            $logOutput = \XF::phrase(
+                'sv_contactusthread_no_matching_spam_trigger_logs'
+            );
+        }
 
-		return $logOutput;
-	}
+        return $logOutput;
+    }
 }
