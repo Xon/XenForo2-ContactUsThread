@@ -54,13 +54,15 @@ class Contact extends XFCP_Contact
 				$message = \XF::phrase('ContactUs_Message_Guest', $input);
 			}
 
-			/** @var \XF\Service\Thread\Creator $creator */
-			$creator = $this->service('XF:Thread\Creator', $forum);
-
-			$creator->setContent($input['subject'], $message);
-			$creator->setUser($user);
-			$creator->setPrefix($forum->default_prefix_id);
-			$creator->save();
+            $creator = \XF::asVisitor($this->threadAuthor, function () {
+                /** @var \XF\Service\Thread\Creator $creator */
+                $creator = $this->service('XF:Thread\Creator', $forum);
+                $creator->setContent($input['subject'], $message);
+                $creator->setUser($user);
+                $creator->setPrefix($forum->default_prefix_id);
+                $creator->save();
+            });
+            $creator->sendNotifications();
 		}
 
 		parent::send();
