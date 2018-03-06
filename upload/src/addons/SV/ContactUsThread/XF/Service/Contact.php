@@ -4,8 +4,57 @@ namespace SV\ContactUsThread\XF\Service;
 
 class Contact extends XFCP_Contact
 {
+    /** @var bool  */
+    protected $doneSpamChecks = false;
+    /** @var string[] */
+    protected $errors = [];
+
+    public function checkForSpam()
+    {
+        if ($this->doneSpamChecks)
+        {
+            return;
+        }
+        // for some reason validate gets called twice...
+        $this->doneSpamChecks = true;
+
+        if (!$this->fromUser)
+        {
+            $visitor = \XF::visitor();
+            $fromUser = clone $visitor;
+            $fromUser->setReadOnly(false);
+            $fromUser->setAsSaved('username', $this->fromName);
+            $fromUser->setAsSaved('email', $this->fromEmail);
+            $fromUser->setReadOnly(true);
+        }
+        else
+        {
+            $fromUser = $this->fromUser;
+        }
+
+        $content = $this->subject . "\n" . $this->message;
+
+        $checker = $this->app->spam()->contentChecker();
+        $checker->check($fromUser, $content, [
+            'content_type' => 'post' // see \XF\Spam\Checker\Akismet for content types
+        ]);
+
+        $decision = $checker->getFinalDecision();
+        switch ($decision)
+        {
+            case 'moderated':
+            case 'denied':
+                $checker->logSpamTrigger('contact_us', $visitor->user_id);
+                $this->errors['message'] = \XF::phrase('your_content_cannot_be_submitted_try_later');
+                break;
+        }
+    }
+
     public function validate(&$errors = [])
     {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $hasErrors = parent::validate($errors);
+
         if ($this->fromUser === null && $this->fromName)
         {
             /** @var \XF\Validator\Username $validator */
@@ -18,7 +67,14 @@ class Contact extends XFCP_Contact
             }
         }
 
-        return parent::validate($errors);
+        $options = $this->app->options();
+        if ($options->svContactSpamCheck && !$this->doneSpamChecks)
+        {
+            $this->checkForSpam();
+        }
+
+        $errors = array_merge($errors, $this->errors);
+        return !count($errors);
     }
 
     public function send()
@@ -37,8 +93,6 @@ class Contact extends XFCP_Contact
                 'message' => $this->message,
                 'ip'      => $this->fromIp
             ];
-
-            // todo: spam checks
 
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
