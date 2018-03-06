@@ -17,15 +17,13 @@ class Contact extends XFCP_Contact
         }
         // for some reason validate gets called twice...
         $this->doneSpamChecks = true;
+        /** @var \XF\Repository\User $userRepo */
+        $userRepo = $this->repository('XF:User');
 
-        if (!$this->fromUser)
+        if ($this->fromUser)
         {
-            $visitor = \XF::visitor();
-            $fromUser = clone $visitor;
-            $fromUser->setReadOnly(false);
-            $fromUser->setAsSaved('username', $this->fromName);
+            $fromUser = $userRepo->getGuestUser($this->fromName);
             $fromUser->setAsSaved('email', $this->fromEmail);
-            $fromUser->setReadOnly(true);
         }
         else
         {
@@ -44,7 +42,7 @@ class Contact extends XFCP_Contact
         {
             case 'moderated':
             case 'denied':
-                $checker->logSpamTrigger('contact_us', $visitor->user_id);
+                $checker->logSpamTrigger('contact_us', $fromUser->user_id);
                 $this->errors['message'] = \XF::phrase('your_content_cannot_be_submitted_try_later');
                 break;
         }
@@ -96,12 +94,11 @@ class Contact extends XFCP_Contact
 
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
-            $visitor = \XF::visitor();
 
             $title = $input['subject'];
-            if ($visitor->user_id)
+            if ($this->fromUser)
             {
-                $user = $visitor;
+                $user = $this->fromUser;
 
                 $message = \XF::phrase('ContactUs_Message_User', $input);
             }
@@ -119,6 +116,8 @@ class Contact extends XFCP_Contact
                 $creator->setContent($title, $message);
                 $creator->setPrefix($forum->default_prefix_id);
                 $creator->save();
+
+                return $creator;
             });
             $creator->sendNotifications();
         }
