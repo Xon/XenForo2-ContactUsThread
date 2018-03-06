@@ -8,6 +8,7 @@ class Contact extends XFCP_Contact
     {
         if ($this->fromUser === null && $this->fromName)
         {
+            /** @var \XF\Validator\Username $validator */
             $validator = $this->app->validator('Username');
             $validator->setOption('check_unique', false);
             $validator->setOption('force_next_validator_request', true);
@@ -22,6 +23,8 @@ class Contact extends XFCP_Contact
 
     public function send()
     {
+        parent::send();
+
         $options = $this->app->options();
         /** @var \XF\Entity\Forum $forum */
         $forum = $this->em()->find('XF:Forum', $options->svContactUsNode);
@@ -65,8 +68,6 @@ class Contact extends XFCP_Contact
             });
             $creator->sendNotifications();
         }
-
-        parent::send();
     }
 
     protected function _formatLogsForDisplay(array $logs)
