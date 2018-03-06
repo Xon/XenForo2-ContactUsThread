@@ -11,6 +11,12 @@
         "version_string": "2.0.0",
         "hash": "342ab947be05cee9946a3fa44568955d"
     },
+    "contact_us_flooding.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "88a38bcc56fd0ebd1a3c18d75105051e"
+    },
     "option.svContactSpamCheck.txt": {
         "global_cache": false,
         "version_id": 2000070,

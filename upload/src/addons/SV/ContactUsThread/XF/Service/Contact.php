@@ -23,7 +23,7 @@ class Contact extends XFCP_Contact
         /** @var \XF\Repository\User $userRepo */
         $userRepo = $this->repository('XF:User');
 
-        if ($this->fromUser)
+        if (!$this->fromUser)
         {
             $fromUser = $userRepo->getGuestUser($this->fromName);
             $fromUser->setAsSaved('email', $this->fromEmail);
@@ -60,8 +60,8 @@ class Contact extends XFCP_Contact
         {
             /** @var \XF\Validator\Username $validator */
             $validator = $this->app->validator('Username');
+            $validator->setOption('admin_edit', true);
             $validator->setOption('check_unique', false);
-            $validator->setOption('force_next_validator_request', true);
             if (!$validator->isValid($this->fromName, $errorKey))
             {
                 $errors['username'] = $validator->getPrintableErrorValue($errorKey);
@@ -153,6 +153,7 @@ class Contact extends XFCP_Contact
             $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
                 /** @var \XF\Service\Thread\Creator $creator */
                 $creator = $this->service('XF:Thread\Creator', $forum);
+                $creator->setPerformValidations(false);
                 $creator->setContent($title, $message);
                 $creator->setPrefix($forum->default_prefix_id);
                 $creator->save();

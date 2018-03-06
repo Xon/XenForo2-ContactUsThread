@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Validator\\Username",
-    "to_class": "SV\\ContactUsThread\\XF\\Validator\\Username",
-    "execute_order": 10,
-    "active": true
-}

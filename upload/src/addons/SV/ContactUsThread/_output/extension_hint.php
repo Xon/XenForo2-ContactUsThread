@@ -17,8 +17,3 @@ namespace SV\ContactUsThread\XF\Service
 {
 	class XFCP_Contact extends \XF\Service\Contact {}
 }
-
-namespace SV\ContactUsThread\XF\Validator
-{
-	class XFCP_Username extends \XF\Validator\Username {}
-}
