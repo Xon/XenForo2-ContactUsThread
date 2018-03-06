@@ -11,6 +11,12 @@
         "version_string": "2.0.0",
         "hash": "984bf7ad1dfbb017a4e577e6527cf718"
     },
+    "option.svContactSpamCheck.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "1f4e3bd45a3bf6173a8b88bcf3c4c8b6"
+    },
     "option.svContactUsAllowBanned.txt": {
         "global_cache": false,
         "version_id": 2000070,
@@ -29,6 +35,30 @@
         "version_string": "2.0.0",
         "hash": "76b296152c6bbfb04424e7ba9d81464e"
     },
+    "option.svContactUsSpamTriggerLogDays.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "447cbfa972a0ba565a51fedc4cada135"
+    },
+    "option.svContactUsSpamTriggerLogLimit.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "db926c48aa156ab179e78c9df2165979"
+    },
+    "option.svContactUsThreadRateLimit.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "32f89a53ceace9b959e8076698c50ec6"
+    },
+    "option_explain.svContactSpamCheck.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "96033c500e50b8c2cc81b0ee306f76cc"
+    },
     "option_explain.svContactUsAllowBanned.txt": {
         "global_cache": false,
         "version_id": 2000070,
@@ -46,6 +76,24 @@
         "version_id": 2000070,
         "version_string": "2.0.0",
         "hash": "bc5b531c8150e65e4fe8f72cb91b3469"
+    },
+    "option_explain.svContactUsSpamTriggerLogDays.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "5cc73d86179079896dd05a25ebde3d67"
+    },
+    "option_explain.svContactUsSpamTriggerLogLimit.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "22a9dbcb9a40f9bbe5e0f4c1e3284cb1"
+    },
+    "option_explain.svContactUsThreadRateLimit.txt": {
+        "global_cache": false,
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "09e1244d56874a15d7b9f98a61318b43"
     },
     "option_group.svContactUsThread.txt": {
         "global_cache": false,

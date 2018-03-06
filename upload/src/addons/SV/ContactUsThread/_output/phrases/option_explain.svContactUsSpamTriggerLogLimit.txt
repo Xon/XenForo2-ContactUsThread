@@ -1,0 +1,2 @@
+The maximum number of matching spam trigger logs to include in the post.<br>
+0 to disable.

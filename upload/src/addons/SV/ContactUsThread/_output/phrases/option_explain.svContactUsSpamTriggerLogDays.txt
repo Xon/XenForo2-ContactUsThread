@@ -1,0 +1,2 @@
+The number of recent days to include matching spam trigger logs from.<br>
+0 to disable.

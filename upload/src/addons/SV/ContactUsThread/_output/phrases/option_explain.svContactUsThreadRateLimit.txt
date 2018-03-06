@@ -1,0 +1,2 @@
+Use XenForo flood management to prevent multiple submission in a short time-window.<br/>
+0 to use XenForo's standard flood check length.
