@@ -24,7 +24,7 @@ class Setup extends AbstractSetup
     {
     }
 
-    public function upgrade2000000Step1()
+    public function upgrade2000070Step1()
     {
         $this->renameOption('sv_contactusthread_node','svContactUsNode');
         $this->renameOption('sv_contactusthread_ratelimit','svContactUsThreadRateLimit');
