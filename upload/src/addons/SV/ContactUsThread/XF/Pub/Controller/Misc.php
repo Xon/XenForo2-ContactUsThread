@@ -62,7 +62,7 @@ class Misc extends XFCP_Misc
             $timeRemaining = $floodChecker->checkFlooding($action, $userId, $contactFloodingLimit);
             if ($timeRemaining)
             {
-                throw $this->exception($this->responseFlooding($timeRemaining));
+                throw $this->exception($this->error(\XF::phrase('contact_us_flooding', ['count' => $timeRemaining])));
             }
 
             return;

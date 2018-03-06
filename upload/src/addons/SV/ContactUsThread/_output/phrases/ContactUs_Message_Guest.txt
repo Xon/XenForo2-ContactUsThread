@@ -3,4 +3,4 @@
 Email: {email}
 
 Latest Spam Trigger Log Matches:
-{spamTriggerLogs}
+{spam_trigger_logs}
