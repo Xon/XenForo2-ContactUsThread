@@ -2,6 +2,9 @@
 
 namespace SV\ContactUsThread\XF\Service;
 
+use XF\Entity\SpamTriggerLog;
+use XF\Util\Ip;
+
 class Contact extends XFCP_Contact
 {
     /** @var bool  */
@@ -86,11 +89,48 @@ class Contact extends XFCP_Contact
         if ($forum)
         {
             $input = [
-                'email'   => $this->fromEmail,
-                'subject' => $this->subject,
-                'message' => $this->message,
-                'ip'      => $this->fromIp
+                'username' => $this->fromName,
+                'email'    => $this->fromEmail,
+                'subject'  => $this->subject,
+                'message'  => $this->message,
+                'ip'       => $this->fromIp
             ];
+
+            $spamTriggerLogDays = intval($options->svContactUsSpamTriggerLogDays);
+            $spamTriggerLogLimit = intval($options->svContactUsSpamTriggerLogLimit);
+
+            if ($spamTriggerLogDays && $spamTriggerLogLimit)
+            {
+                $binaryIp = Ip::convertIpStringToBinary($this->fromIp);
+
+                $date = \XF::$time - ($spamTriggerLogDays * 86400);
+                $finder = $this->finder('XF:SpamTriggerLog')
+                               ->with('User')
+                               ->setDefaultOrder('log_date', 'DESC')
+                               ->where('content_type', '=', 'user')
+                               ->where('log_date', '>', $date);
+
+                $orConditions = [];
+                $orConditions[] = ['User.email', '=', $this->fromEmail];
+                $orConditions[] = ['details', 'like', '%' . $this->fromEmail .'%'];
+
+                if ($binaryIp)
+                {
+                    $orConditions[] = ['ip_address', '=', $binaryIp];
+                }
+
+                $finder->whereOr($orConditions);
+
+                /** @var \XF\Entity\SpamTriggerLog[] $logs */
+                $logs = $finder->fetch()->toArray();
+            }
+            else
+            {
+                /** @var \XF\Entity\SpamTriggerLog[] $logs */
+                $logs = [];
+            }
+
+            $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
 
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
@@ -123,6 +163,10 @@ class Contact extends XFCP_Contact
         }
     }
 
+    /**
+     * @param SpamTriggerLog[] $logs
+     * @return string
+     */
     protected function _formatLogsForDisplay(array $logs)
     {
         if (!empty($logs))
@@ -131,12 +175,12 @@ class Contact extends XFCP_Contact
 
             foreach ($logs as $log)
             {
-                $time = \XF::language()->time($log['log_date'], 'absolute');
+                $time = \XF::language()->time($log->log_date, 'absolute');
                 $logOutput .= "[*]{$time}: ";
 
-                if ($log['username'])
+                if ($log->User)
                 {
-                    $logOutput .= "@{$log['username']} ";
+                    $logOutput .= "@{$log->User->username} ";
                 }
                 else
                 {
@@ -145,11 +189,11 @@ class Contact extends XFCP_Contact
 
                 $logOutput .= ' - ';
 
-                if ($log['result'] == 'denied')
+                if ($log->result == 'denied')
                 {
                     $result = \XF::phrase('rejected');
                 }
-                else if ($log['result'] == 'moderated')
+                else if ($log->result == 'moderated')
                 {
                     $result = \XF::phrase('moderated');
                 }
@@ -160,7 +204,7 @@ class Contact extends XFCP_Contact
 
                 $logOutput .= $result;
 
-                foreach ($log['detailsPrintable'] as $detail)
+                foreach ($log->details as $detail)
                 {
                     $logOutput .= " ({$detail})";
                 }
