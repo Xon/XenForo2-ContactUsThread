@@ -1,6 +1,6 @@
 <?php
 
-namespace SV\WarningImprovements;
+namespace SV\ContactUsThread;
 
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
@@ -24,7 +24,7 @@ class Setup extends AbstractSetup
     {
     }
 
-    public function upgrade2000070Step1()
+    public function upgrade2000100Step1()
     {
         $this->renameOption('sv_contactusthread_node','svContactUsNode');
         $this->renameOption('sv_contactusthread_ratelimit','svContactUsThreadRateLimit');
