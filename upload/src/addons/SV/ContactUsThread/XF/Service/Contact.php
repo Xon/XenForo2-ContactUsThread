@@ -51,30 +51,40 @@ class Contact extends XFCP_Contact
         }
     }
 
+    protected $validated2;
+
     public function validate(&$errors = [])
     {
+        $errors = [];
+
         /** @noinspection PhpUnusedLocalVariableInspection */
         $hasErrors = parent::validate($errors);
 
-        if ($this->fromUser === null && $this->fromName)
+        if (!$this->validated2)
         {
-            /** @var \XF\Validator\Username $validator */
-            $validator = $this->app->validator('Username');
-            $validator->setOption('admin_edit', true);
-            $validator->setOption('check_unique', false);
-            if (!$validator->isValid($this->fromName, $errorKey))
+
+            if ($this->fromUser === null && $this->fromName)
             {
-                $errors['username'] = $validator->getPrintableErrorValue($errorKey);
+                /** @var \XF\Validator\Username $validator */
+                $validator = $this->app->validator('Username');
+                $validator->setOption('admin_edit', true);
+                $validator->setOption('check_unique', false);
+                if (!$validator->isValid($this->fromName, $errorKey))
+                {
+                    $errors['username'] = $validator->getPrintableErrorValue($errorKey);
+                }
             }
+
+            $options = $this->app->options();
+            if ($options->svContactSpamCheck && !$this->doneSpamChecks)
+            {
+                $this->checkForSpam();
+            }
+
+            $errors = array_merge($errors, $this->errors);
+            $this->validated2 = true;
         }
 
-        $options = $this->app->options();
-        if ($options->svContactSpamCheck && !$this->doneSpamChecks)
-        {
-            $this->checkForSpam();
-        }
-
-        $errors = array_merge($errors, $this->errors);
         return !count($errors);
     }
 
