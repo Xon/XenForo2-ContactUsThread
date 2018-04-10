@@ -215,9 +215,13 @@ class Contact extends XFCP_Contact
 
                 $logOutput .= $result;
 
-                foreach ($log->details as $detail)
+                $details = $log->details;
+                if (is_array($details))
                 {
-                    $logOutput .= " ({$detail})";
+                    foreach ($details as $detail)
+                    {
+                        $logOutput .= " ({$detail})";
+                    }
                 }
 
                 $logOutput .= "\n";
