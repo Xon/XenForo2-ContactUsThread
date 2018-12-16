@@ -7,7 +7,7 @@ use XF\Util\Ip;
 
 class Contact extends XFCP_Contact
 {
-    /** @var bool  */
+    /** @var bool */
     protected $doneSpamChecks = false;
     /** @var string[] */
     protected $errors = [];
@@ -122,7 +122,7 @@ class Contact extends XFCP_Contact
 
                 $orConditions = [];
                 $orConditions[] = ['User.email', '=', $this->fromEmail];
-                $orConditions[] = ['details', 'like', '%' . $this->fromEmail .'%'];
+                $orConditions[] = ['details', 'like', '%' . $this->fromEmail . '%'];
 
                 if ($binaryIp)
                 {
@@ -133,14 +133,12 @@ class Contact extends XFCP_Contact
 
                 /** @var \XF\Entity\SpamTriggerLog[] $logs */
                 $logs = $finder->fetch()->toArray();
+                $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
             }
             else
             {
-                /** @var \XF\Entity\SpamTriggerLog[] $logs */
-                $logs = [];
+                $input['spam_trigger_logs'] = '';
             }
-
-            $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
 
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
@@ -150,14 +148,14 @@ class Contact extends XFCP_Contact
             {
                 $user = $this->fromUser;
 
-                $message = \XF::phrase('ContactUs_Message_User', $input);
+                $message = \XF::phrase('ContactUs_Message_User', $input)->render('raw');
             }
             else
             {
                 $username = $this->fromName;
                 $user = $userRepo->getGuestUser($username);
 
-                $message = \XF::phrase('ContactUs_Message_Guest', $input);
+                $message = \XF::phrase('ContactUs_Message_Guest', $input)->render('raw');
             }
 
             $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
@@ -231,9 +229,7 @@ class Contact extends XFCP_Contact
         }
         else
         {
-            $logOutput = \XF::phrase(
-                'sv_contactusthread_no_matching_spam_trigger_logs'
-            );
+            $logOutput = \XF::phrase('sv_contactusthread_no_matching_spam_trigger_logs');
         }
 
         return $logOutput;
