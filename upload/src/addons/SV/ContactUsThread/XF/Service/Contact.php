@@ -163,7 +163,11 @@ class Contact extends XFCP_Contact
                 $creator = $this->service('XF:Thread\Creator', $forum);
                 $creator->setPerformValidations(false);
                 $creator->setContent($title, $message);
-                $creator->setPrefix($forum->default_prefix_id);
+                $defaultPrefix = isset($forum->sv_default_prefix_ids) ? $forum->sv_default_prefix_ids : $forum->default_prefix_id;
+                if ($defaultPrefix)
+                {
+                    $creator->setPrefix($defaultPrefix);
+                }
                 $creator->save();
 
                 return $creator;
