@@ -25,16 +25,14 @@ class Misc extends XFCP_Misc
         parent::assertNotBanned();
     }
 
-    public function actionContact()
+    protected function setupContactService()
     {
-        if ($this->app()->options()->svContactUsDiscardDiscourage && $this->isPost() && $this->isDiscouraged())
-        {
-            $redirect = $this->getDynamicRedirect(null, false);
+        /** @var \SV\ContactUsThread\XF\Service\Contact $form */
+        $form = parent::setupContactService();
 
-            return $this->redirect($redirect, \XF::phrase('your_message_has_been_sent'));
-        }
+        $form->setDiscouraged($this->isDiscouraged());
 
-        return parent::actionContact();
+        return $form;
     }
 
     public function assertNotFlooding($action, $floodingLimit = null)

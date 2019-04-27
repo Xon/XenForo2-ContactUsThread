@@ -7,6 +7,6 @@
     "validation_method": "",
     "default_value": "1",
     "relations": {
-        "svContactUsThread": 200
+        "svContactUsThread": 130
     }
 }

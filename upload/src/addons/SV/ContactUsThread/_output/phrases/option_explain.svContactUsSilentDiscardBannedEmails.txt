@@ -1,0 +1,1 @@
+Accept but silently discard emails from banned email addresses

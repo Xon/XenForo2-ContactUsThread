@@ -1,0 +1,1 @@
+Silently discard banned emails

@@ -11,6 +11,8 @@ class Contact extends XFCP_Contact
     protected $doneSpamChecks = false;
     /** @var string[] */
     protected $errors = [];
+    /** @var bool */
+    protected $isDiscouraged = false;
 
     public function checkForSpam()
     {
@@ -88,8 +90,33 @@ class Contact extends XFCP_Contact
         return !count($errors);
     }
 
+    /**
+     * @param bool $isDiscouraged
+     */
+    public function setDiscouraged($isDiscouraged)
+    {
+        $this->isDiscouraged = $isDiscouraged;
+    }
+
     public function send()
     {
+        $options = $this->app->options();
+        if ($options->svContactUsDiscardDiscourage && $this->isDiscouraged)
+        {
+            return;
+        }
+        else if ($this->fromEmail && $options->svContactUsSilentDiscardBannedEmails)
+        {
+            $validator = $this->app->validator('Email');
+            $validator->setOption('banned', $this->app->container('bannedEmails'));
+
+            $email = $validator->coerceValue($this->fromEmail);
+            if (!$validator->isValid($email))
+            {
+                return;
+            }
+        }
+
         parent::send();
 
         $options = $this->app->options();
