@@ -105,15 +105,36 @@ class Contact extends XFCP_Contact
         {
             return;
         }
-        else if ($this->fromEmail && $options->svContactUsSilentDiscardBannedEmails)
+        else if ($this->fromEmail)
         {
-            $validator = $this->app->validator('Email');
-            $validator->setOption('banned', $this->app->container('bannedEmails'));
-
-            $email = $validator->coerceValue($this->fromEmail);
-            if (!$validator->isValid($email))
+            if ($options->svContactUsSilentDiscardBannedEmails)
             {
-                return;
+                /** @var \XF\Validator\Email $validator */
+                $validator = $this->app->validator('Email');
+                $validator->setOption('banned', $this->app->container('bannedEmails'));
+
+                $email = $validator->coerceValue($this->fromEmail);
+                if (!$validator->isValid($email))
+                {
+
+                    return;
+                }
+            }
+
+            /** @var \SV\ContactUsThread\Repository\Banning $shadowBannedRepo */
+            $shadowBannedRepo = $this->repository('SV\ContactUsThread:Banning');
+            $shadowBannedEmails = $shadowBannedRepo->findEmailBans()->fetchColumns('banned_email');
+
+            /** @var \SV\ContactUsThread\Entity\BanEmail $bannedEmail */
+            foreach ($shadowBannedEmails AS $bannedEmail)
+            {
+                $bannedEmail = $rawValue = $bannedEmail['banned_email'];
+                $bannedEmail = str_replace('\\*', '(.*)', preg_quote($bannedEmail, '/'));
+                if (preg_match('/^' . $bannedEmail . '$/i', $this->fromEmail))
+                {
+                    \XF::db()->query('update xf_sv_ban_email_contact_us set last_triggered_date = unix_timestamp() where banned_email = ?', $rawValue);
+                    return;
+                }
             }
         }
 
@@ -130,7 +151,7 @@ class Contact extends XFCP_Contact
                 'email'    => $this->fromEmail,
                 'subject'  => $this->subject,
                 'message'  => $this->message,
-                'ip'       => $this->fromIp
+                'ip'       => $this->fromIp,
             ];
 
             $spamTriggerLogDays = intval($options->svContactUsSpamTriggerLogDays);

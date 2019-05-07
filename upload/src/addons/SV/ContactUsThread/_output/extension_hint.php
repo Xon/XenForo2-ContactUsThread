@@ -3,6 +3,11 @@
 // ################## THIS IS A GENERATED FILE ##################
 // DO NOT EDIT DIRECTLY. EDIT THE CLASS EXTENSIONS IN THE CONTROL PANEL.
 
+namespace SV\ContactUsThread\XF\Admin\Controller
+{
+	class XFCP_Banning extends \XF\Admin\Controller\Banning {}
+}
+
 namespace SV\ContactUsThread\XF\Entity
 {
 	class XFCP_User extends \XF\Entity\User {}
