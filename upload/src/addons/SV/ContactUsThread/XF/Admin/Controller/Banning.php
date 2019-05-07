@@ -45,7 +45,7 @@ class Banning extends XFCP_Banning
                                ->limitByPage($page, $perPage);
         $total = $emailBanFinder->total();
 
-        $this->assertValidPage($page, $perPage, $total, 'banning/emails');
+        $this->assertValidPage($page, $perPage, $total, 'banning/emails-contact');
 
         $viewParams = [
             'emailBans' => $emailBanFinder->fetch(),
@@ -67,7 +67,7 @@ class Banning extends XFCP_Banning
             $this->filter('email', 'str'),
             $this->filter('reason', 'str')
         );
-        return $this->redirect($this->buildLink('banning/emails'));
+        return $this->redirect($this->buildLink('banning/emails-contact'));
     }
 
     public function actionEmailsContactDelete()
