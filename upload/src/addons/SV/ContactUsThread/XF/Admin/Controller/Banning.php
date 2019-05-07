@@ -39,7 +39,7 @@ class Banning extends XFCP_Banning
             $orderFields[] = ['banned_email', 'asc'];
         }
 
-        $emailBanFinder = $this->getBanningRepo()->findEmailBans()
+        $emailBanFinder = $this->getSvBanningRepo()->findEmailBans()
                                ->with('User')
                                ->order($orderFields)
                                ->limitByPage($page, $perPage);
@@ -54,7 +54,7 @@ class Banning extends XFCP_Banning
             'total' => $total,
             'order' => $order,
             'direction' => $direction,
-            'newEmail' => $this->em()->create('XF:BanEmail')
+            'newEmail' => $this->em()->create('SV\ContactUsThread:BanEmail')
         ];
         return $this->view('XF:Banning\Email\Listing', 'sv_ban_contact_email_list', $viewParams);
     }
@@ -63,7 +63,7 @@ class Banning extends XFCP_Banning
     {
         $this->assertPostOnly();
 
-        $this->getBanningRepo()->banEmail(
+        $this->getSvBanningRepo()->banEmail(
             $this->filter('email', 'str'),
             $this->filter('reason', 'str')
         );
@@ -76,7 +76,7 @@ class Banning extends XFCP_Banning
 
         $deletes = $this->filter('delete', 'array-str');
 
-        $emailBans = $this->em()->findByIds('XF:BanEmail', $deletes);
+        $emailBans = $this->em()->findByIds('SV\ContactUsThread:BanEmail', $deletes);
         foreach ($emailBans AS $emailBan)
         {
             $emailBan->delete();
@@ -87,7 +87,7 @@ class Banning extends XFCP_Banning
 
     public function actionEmailsContactExport()
     {
-        $bannedEmails = $this->getBanningRepo()->findEmailBans();
+        $bannedEmails = $this->getSvBanningRepo()->findEmailBans();
         return $this->plugin('XF:Xml')->actionExport($bannedEmails, 'SV\ContactUsThread:BannedEmails\Export');
     }
 
@@ -99,7 +99,7 @@ class Banning extends XFCP_Banning
     /**
      * @return \XF\Mvc\Entity\Repository|\SV\ContactUsThread\Repository\Banning
      */
-    protected function getBanningRepo()
+    protected function getSvBanningRepo()
     {
         return $this->repository('SV\ContactUsThread:Banning');
     }
