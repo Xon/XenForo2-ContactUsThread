@@ -156,7 +156,7 @@ class Contact extends XFCP_Contact
 
     protected function getThreadPhraseInputs(/** @noinspection PhpUnusedParameterInspection */ \XF\Entity\Forum  $forum, \XF\Entity\User  $user)
     {
-        return [
+        $input = [
             'username'          => $this->fromName,
             'email'             => $this->fromEmail,
             'subject'           => $this->subject,
@@ -164,6 +164,44 @@ class Contact extends XFCP_Contact
             'ip'                => $this->fromIp,
             'spam_trigger_logs' => $this->getSpamTriggerLogs(),
         ];
+
+        if (!$user->user_id)
+        {
+            $addOnsCache = \XF::app()->container('addon.cache');
+            if (isset($addOnsCache['SV/SignupAbuseBlocking']))
+            {
+                $options = \XF::options();
+                $oldValue = $options->svSockSignupCookieFormat;
+                $options->svSockSignupCookieFormat = [];
+                try
+                {
+                    /** @var \SV\SignupAbuseBlocking\Repository\MultipleAccount $multipleAccountRepo */
+                    $multipleAccountRepo = $this->repository('SV\SignupAbuseBlocking:MultipleAccount');
+                    $receivedToken = $multipleAccountRepo->getCookieValue('contact_us');
+                    if ($receivedToken)
+                    {
+                        /** @var \SV\SignupAbuseBlocking\Entity\Token $tokenEntity */
+                        $tokenEntity = $multipleAccountRepo->getTokenFromCookie($receivedToken);
+                        if ($tokenEntity)
+                        {
+                            $user = $tokenEntity->User;
+                            if ($user)
+                            {
+                                // multi-account detected a user, when the user isn't logged in
+                                $input['multi_account_username'] = $user->username;
+                                $input['multi_account_user_id'] = $user->user_id;
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    $options->svSockSignupCookieFormat = $oldValue;
+                }
+            }
+        }
+
+        return $input;
     }
 
     protected function getSpamTriggerLogs()
