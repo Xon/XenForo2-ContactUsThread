@@ -178,13 +178,26 @@ class Contact extends XFCP_Contact
             return '';
         }
         $binaryIp = Ip::convertIpStringToBinary($this->fromIp);
-
         $date = \XF::$time - ($spamTriggerLogDays * 86400);
-        $finder = $this->finder('XF:SpamTriggerLog')
-                       ->with('User')
-                       ->setDefaultOrder('log_date', 'DESC')
-                       ->where('content_type', '=', 'user')
-                       ->where('log_date', '>', $date);
+
+        $addonsCache = \XF::app()->container('addon.cache');
+        if (isset($addonsCache['SV/SignupAbuseBlocking']))
+        {
+            /** @var \SV\SignupAbuseBlocking\Entity\UserRegistrationLog $finder */
+            $finder = \XF::finder('SV\SignupAbuseBlocking:UserRegistrationLog')
+                         ->with('User')
+                         ->setDefaultOrder('log_date', 'DESC')
+                         ->where('log_date', '>', $date);
+        }
+        else
+        {
+            /** @var \XF\Finder\SpamTriggerLog $finder */
+            $finder = $this->finder('XF:SpamTriggerLog')
+                           ->with('User')
+                           ->setDefaultOrder('log_date', 'DESC')
+                           ->where('content_type', '=', 'user')
+                           ->where('log_date', '>', $date);
+        }
 
         $orConditions = [];
         $orConditions[] = ['User.email', '=', $this->fromEmail];
