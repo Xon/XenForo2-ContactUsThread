@@ -189,7 +189,7 @@ class Contact extends XFCP_Contact
                             if ($user)
                             {
                                 // multi-account detected a user, when the user isn't logged in
-                                $input['multi_account'] = $user;
+                                $input['multiAccount'] = $user;
                             }
                         }
                     }

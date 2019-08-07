@@ -1,6 +1,7 @@
 [plain]{$message|raw}[/plain]
 
-<xf:if is="$user.user_id">{{ phrase('email:') }}: {$user.email}</xf:if>
+<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username}</xf:if>
+<xf:if is="!$user.user_id">{{ phrase('email:') }}: {$user.email}</xf:if>
 <xf:if is="$spam_trigger_logs is not empty">
 {{ phrase('svContactUs_spamTriggerLogs:') }}
 [list]
@@ -16,4 +17,6 @@
 <xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
 </xf:foreach></xf:trim>
 [/list]
+<xf:else />
+{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs') }}
 </xf:if>
