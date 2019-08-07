@@ -2,7 +2,7 @@
 
 namespace SV\ContactUsThread\XF\Service;
 
-use XF\Entity\SpamTriggerLog;
+use XF\Mvc\Entity\AbstractCollection;
 use XF\Util\Ip;
 
 class Contact extends XFCP_Contact
@@ -204,6 +204,9 @@ class Contact extends XFCP_Contact
         return $input;
     }
 
+    /**
+     * @return AbstractCollection|null
+     */
     protected function getSpamTriggerLogs()
     {
         $options = $this->app->options();
@@ -213,21 +216,35 @@ class Contact extends XFCP_Contact
 
         if (!$spamTriggerLogDays || !$spamTriggerLogLimit)
         {
-            return '';
+            return null;
         }
         $binaryIp = Ip::convertIpStringToBinary($this->fromIp);
         $date = \XF::$time - ($spamTriggerLogDays * 86400);
 
-        $addonsCache = \XF::app()->container('addon.cache');
-        if (isset($addonsCache['SV/SignupAbuseBlocking']))
+        $logs = null;
+        $addOnsCache = \XF::app()->container('addon.cache');
+        if (isset($addOnsCache['SV/SignupAbuseBlocking']))
         {
-            /** @var \SV\SignupAbuseBlocking\Entity\UserRegistrationLog $finder */
+            /** @var \SV\SignupAbuseBlocking\Finder\UserRegistrationLog $finder */
             $finder = \XF::finder('SV\SignupAbuseBlocking:UserRegistrationLog')
                          ->with('User')
                          ->setDefaultOrder('log_date', 'DESC')
                          ->where('log_date', '>', $date);
+            $orConditions = [];
+            $orConditions[] = ['User.email', '=', $this->fromEmail];
+            $orConditions[] = ['details', 'like', '%' . $this->fromEmail . '%'];
+
+            if ($binaryIp)
+            {
+                $orConditions[] = ['ip_address', '=', $binaryIp];
+            }
+
+            $finder->whereOr($orConditions);
+
+            $logs = $finder->fetch();
         }
-        else
+        // try normal spam trigger log as well
+        if (!$logs || !$logs->count())
         {
             /** @var \XF\Finder\SpamTriggerLog $finder */
             $finder = $this->finder('XF:SpamTriggerLog')
@@ -235,21 +252,19 @@ class Contact extends XFCP_Contact
                            ->setDefaultOrder('log_date', 'DESC')
                            ->where('content_type', '=', 'user')
                            ->where('log_date', '>', $date);
+            $orConditions = [];
+            $orConditions[] = ['User.email', '=', $this->fromEmail];
+            $orConditions[] = ['details', 'like', '%' . $this->fromEmail . '%'];
+
+            if ($binaryIp)
+            {
+                $orConditions[] = ['ip_address', '=', $binaryIp];
+            }
+
+            $finder->whereOr($orConditions);
+
+            $logs = $finder->fetch();
         }
-
-        $orConditions = [];
-        $orConditions[] = ['User.email', '=', $this->fromEmail];
-        $orConditions[] = ['details', 'like', '%' . $this->fromEmail . '%'];
-
-        if ($binaryIp)
-        {
-            $orConditions[] = ['ip_address', '=', $binaryIp];
-        }
-
-        $finder->whereOr($orConditions);
-
-        /** @var \XF\Entity\SpamTriggerLog[] $logs */
-        $logs = $finder->fetch()->toArray();
 
         return $logs;
     }
