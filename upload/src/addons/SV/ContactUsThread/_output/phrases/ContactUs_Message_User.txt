@@ -1,4 +1,0 @@
-[plain]{message}[/plain]
-
-Latest Spam Trigger Log Matches:
-{spam_trigger_logs}

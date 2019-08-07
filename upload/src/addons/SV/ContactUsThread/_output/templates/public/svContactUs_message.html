@@ -1,0 +1,19 @@
+[plain]{$message|raw}[/plain]
+
+<xf:if is="$user.user_id">{{ phrase('email:') }}: {$user.email}</xf:if>
+<xf:if is="$spam_trigger_logs is not empty">
+{{ phrase('svContactUs_spamTriggerLogs:') }}
+[list]
+<xf:trim><xf:foreach loop="$spam_trigger_logs" value="$log">
+<xf:if is="$log.result === 'denied'">
+	<xf:set var="$result" value="{{ phrase('rejected') }}"/>
+<xf:elseif is="$log.result === 'moderated'" />
+	<xf:set var="$result" value="{{ phrase('moderated') }}"/>
+<xf:else />
+	<xf:set var="$result" value="{$log.result}"/>
+</xf:if>
+[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username : phrase('unknown_account') }} - {$result|raw}
+<xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
+</xf:foreach></xf:trim>
+[/list]
+</xf:if>

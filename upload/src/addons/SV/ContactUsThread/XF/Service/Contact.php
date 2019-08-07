@@ -157,6 +157,7 @@ class Contact extends XFCP_Contact
     protected function getThreadPhraseInputs(/** @noinspection PhpUnusedParameterInspection */ \XF\Entity\Forum  $forum, \XF\Entity\User  $user)
     {
         $input = [
+            'user'              => $user,
             'username'          => $this->fromName,
             'email'             => $this->fromEmail,
             'subject'           => $this->subject,
@@ -188,8 +189,7 @@ class Contact extends XFCP_Contact
                             if ($user)
                             {
                                 // multi-account detected a user, when the user isn't logged in
-                                $input['multi_account_username'] = $user->username;
-                                $input['multi_account_user_id'] = $user->user_id;
+                                $input['multi_account'] = $user;
                             }
                         }
                     }
@@ -251,7 +251,7 @@ class Contact extends XFCP_Contact
         /** @var \XF\Entity\SpamTriggerLog[] $logs */
         $logs = $finder->fetch()->toArray();
 
-        return $this->_formatLogsForDisplay($logs);
+        return $logs;
     }
 
     protected function svPostThreadToForum(\XF\Entity\Forum  $forum)
@@ -259,19 +259,17 @@ class Contact extends XFCP_Contact
         if ($this->fromUser)
         {
             $user = $this->fromUser;
-            $phrase = 'ContactUs_Message_User';
         }
         else
         {
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
             $user = $userRepo->getGuestUser($this->fromName);
-            $phrase = 'ContactUs_Message_Guest';
         }
         $input = $this->getThreadPhraseInputs($forum, $user);
 
         $title = $input['subject'];
-        $message = \XF::phrase($phrase, $input)->render('raw');
+        $message = \XF::app()->templater()->renderTemplate('svContactUs_message', $input);
 
         $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
             /** @var \XF\Service\Thread\Creator $creator */
@@ -289,68 +287,5 @@ class Contact extends XFCP_Contact
         });
 
         $creator->sendNotifications();
-    }
-
-    /**
-     * @param SpamTriggerLog[] $logs
-     * @return string
-     */
-    protected function _formatLogsForDisplay(array $logs)
-    {
-        if (!empty($logs))
-        {
-            $logOutput = "[LIST]\n";
-
-            foreach ($logs as $log)
-            {
-                $time = \XF::language()->time($log->log_date, 'absolute');
-                $logOutput .= "[*]{$time}: ";
-
-                if ($log->User)
-                {
-                    $logOutput .= "@{$log->User->username} ";
-                }
-                else
-                {
-                    $logOutput .= \XF::phrase('unknown_account') . ' ';
-                }
-
-                $logOutput .= ' - ';
-
-                if ($log->result == 'denied')
-                {
-                    $result = \XF::phrase('rejected');
-                }
-                else if ($log->result == 'moderated')
-                {
-                    $result = \XF::phrase('moderated');
-                }
-                else
-                {
-                    $result = $log['result'];
-                }
-
-                $logOutput .= $result;
-
-                $details = $log->details;
-                if (is_array($details))
-                {
-                    foreach ($details as $detail)
-                    {
-                        $logOutput .= " ({$detail})";
-                    }
-                }
-
-                $logOutput .= "\n";
-            }
-
-            $logOutput .= '[/LIST]';
-        }
-        else
-        {
-            $logOutput = \XF::phrase('sv_contactusthread_no_matching_spam_trigger_logs');
-        }
-
-        return $logOutput;
     }
 }
