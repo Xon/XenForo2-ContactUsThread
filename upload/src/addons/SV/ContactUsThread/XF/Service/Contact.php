@@ -269,7 +269,7 @@ class Contact extends XFCP_Contact
         $input = $this->getThreadPhraseInputs($forum, $user);
 
         $title = $input['subject'];
-        $message = \XF::app()->templater()->renderTemplate('svContactUs_message', $input);
+        $message = \XF::app()->templater()->renderTemplate('public:svContactUs_message', $input);
 
         $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
             /** @var \XF\Service\Thread\Creator $creator */
