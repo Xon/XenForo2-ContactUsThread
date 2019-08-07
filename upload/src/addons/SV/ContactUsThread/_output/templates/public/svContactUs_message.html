@@ -1,8 +1,8 @@
 [plain]{$message|raw}[/plain]
 
-<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username}</xf:if>
-<xf:if is="!$user.user_id">{{ phrase('email:') }}: {$user.email}</xf:if>
-<xf:if is="$spam_trigger_logs is not empty">{{ phrase('svContactUs_spamTriggerLogs:') }}
+<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username|raw}</xf:if>
+<xf:if is="!$user.user_id">{{ phrase('email:') }}: {$user.email|raw}</xf:if>
+<xf:if is="$spam_trigger_logs is not empty">{{ phrase('svContactUs_spamTriggerLogs:')|raw }}
 [list]
 <xf:trim><xf:foreach loop="$spam_trigger_logs" value="$log">
 <xf:if is="$log.result === 'denied'">
@@ -12,9 +12,9 @@
 <xf:else />
 	<xf:set var="$result" value="{$log.result}"/>
 </xf:if>
-[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username : phrase('unknown_account') }} - {$result|raw}
+[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username|raw : phrase('unknown_account')|raw }} - {$result|raw}
 <xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
 </xf:foreach></xf:trim>
 [/list]
-<xf:else />{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs') }}
+<xf:else />{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs')|raw }}
 </xf:if>
