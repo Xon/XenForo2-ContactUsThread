@@ -280,6 +280,7 @@ class Contact extends XFCP_Contact
             /** @var \XF\Repository\User $userRepo */
             $userRepo = $this->repository('XF:User');
             $user = $userRepo->getGuestUser($this->fromName);
+            $user->setAsSaved('email', $this->fromEmail);
         }
         $input = $this->getThreadPhraseInputs($forum, $user);
 

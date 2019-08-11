@@ -1,10 +1,12 @@
 [plain]{$message|raw}[/plain]
 
-<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username|raw}</xf:if>
-<xf:if is="!$user.user_id">{{ phrase('email:') }}: {$user.email|raw}</xf:if>
+<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username|raw} (<xf:trim><xf:macro name="userStatePhrase" arg-user="{$multiAccount}" /><xf:if is="!$multiAccount.is_banned"> - {{ phrase('user_is_banned') }}</xf:if></xf:trim></xf:if>
+<xf:if is="!$user.user_id">{{ phrase('email:') }}: {$email|raw}<xf:else /><xf:trim>
+{{ phrase('user_state:') }}: <xf:macro name="userStatePhrase" arg-user="{$user}" /></xf:trim></xf:if>
+<xf:if is="$user.is_banned">{{ phrase('user_is_banned') }}</xf:if>
 <xf:if is="$spam_trigger_logs is not empty">{{ phrase('svContactUs_spamTriggerLogs:')|raw }}
 [list]
-<xf:trim><xf:foreach loop="$spam_trigger_logs" value="$log">
+<xf:trim><xf:foreach loop="$spam_trigger_logs" value="$log"><xf:trim>
 <xf:if is="$log.result === 'denied'">
 	<xf:set var="$result" value="{{ phrase('rejected') }}"/>
 <xf:elseif is="$log.result === 'moderated'" />
@@ -12,9 +14,22 @@
 <xf:else />
 	<xf:set var="$result" value="{$log.result}"/>
 </xf:if>
-[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username|raw : phrase('unknown_account')|raw }} - {$result|raw}
+</xf:trim>[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username|raw : phrase('unknown_account')|raw }} - {$result|raw}<xf:trim>
 <xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
-</xf:foreach></xf:trim>
+</xf:trim></xf:foreach></xf:trim>
 [/list]
 <xf:else />{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs')|raw }}
-</xf:if>
+</xf:if><xf:trim>
+<xf:macro name="userStatePhrase" arg-user="!"><xf:trim>
+	<xf:set var="$userState" value="{{ $user.user_state }}" />
+
+	<xf:if is="$userState === 'valid'">{{ phrase('valid') }}
+		<xf:elseif is="$userState === 'email_confirm'" />{{ phrase('awaiting_email_confirmation') }}
+		<xf:elseif is="$userState === 'email_confirm_edit'" />{{ phrase('awaiting_email_confirmation_from_edit') }}
+		<xf:elseif is="$userState === 'email_bounce'" />{{ phrase('email_invalid_bounced') }}
+		<xf:elseif is="$userState === 'moderated'" />{{ phrase('awaiting_approval') }}
+		<xf:elseif is="$userState === 'rejected'" />{{ phrase('rejected') }}
+		<xf:elseif is="$userState === 'disabled'" />{{ phrase('disabled') }}
+	</xf:if>
+</xf:trim></xf:macro>
+</xf:trim>
