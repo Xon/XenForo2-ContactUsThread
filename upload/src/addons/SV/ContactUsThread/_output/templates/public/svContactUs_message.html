@@ -1,6 +1,6 @@
 [plain]{$message|raw}[/plain]
 
-<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username|raw} (<xf:trim><xf:macro name="userStatePhrase" arg-user="{$multiAccount}" /><xf:if is="!$multiAccount.is_banned"> - {{ phrase('user_is_banned') }}</xf:if></xf:trim></xf:if>
+<xf:if is="$multiAccount">{{ phrase('svContactUs_multi_account_match:') }}: @{$multiAccount.username|raw} <xf:macro name="userState" arg-user="{$user}" /></xf:if>
 <xf:if is="!$user.user_id">{{ phrase('email:') }}: {$email|raw}<xf:else /><xf:trim>
 {{ phrase('user_state:') }}: <xf:macro name="userStatePhrase" arg-user="{$user}" /></xf:trim></xf:if>
 <xf:if is="$user.is_banned">{{ phrase('user_is_banned') }}</xf:if>
@@ -14,12 +14,18 @@
 <xf:else />
 	<xf:set var="$result" value="{$log.result}"/>
 </xf:if>
-</xf:trim>[*]{{ date($log.log_date) }}: {{ $log.User ? '@'. $log.User.username|raw : phrase('unknown_account')|raw }} - {$result|raw}<xf:trim>
+<xf:set var="$userState"><xf:macro name="userState" arg-user="{$user}" /></xf:set>
+</xf:trim>[*]{{ date($log.log_date) }}: {{ $log.User ? ('@'. $log.User.username|raw . ' ' .$userState ) : phrase('unknown_account')|raw }} - {$result|raw}<xf:trim>
 <xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
 </xf:trim></xf:foreach></xf:trim>
 [/list]
 <xf:else />{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs')|raw }}
 </xf:if><xf:trim>
+
+<xf:macro name="userState" arg-user="!"><xf:trim><xf:if is="$user.user_id">
+	(<xf:macro name="userStatePhrase" arg-user="{$user}" /><xf:if is="!$user.is_banned"> - {{ phrase('user_is_banned') }}</xf:if>)
+</xf:if></xf:trim></xf:macro>
+
 <xf:macro name="userStatePhrase" arg-user="!"><xf:trim>
 	<xf:set var="$userState" value="{{ $user.user_state }}" />
 
