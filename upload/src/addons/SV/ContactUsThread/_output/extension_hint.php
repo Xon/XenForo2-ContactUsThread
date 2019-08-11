@@ -16,6 +16,7 @@ namespace SV\ContactUsThread\XF\Entity
 
 namespace SV\ContactUsThread\XF\Pub\Controller
 {
+	class XFCP_Login extends \XF\Pub\Controller\Login {}
 	class XFCP_Misc extends \XF\Pub\Controller\Misc {}
 }
 

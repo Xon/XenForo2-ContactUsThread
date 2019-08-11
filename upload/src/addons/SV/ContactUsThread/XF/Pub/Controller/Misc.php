@@ -2,11 +2,15 @@
 
 namespace SV\ContactUsThread\XF\Pub\Controller;
 
+use SV\ContactUsThread\Globals;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\View;
 use XF\Util\Ip;
 
 class Misc extends XFCP_Misc
 {
+    /** @var bool */
+    public $svRedirectInProgress = false;
     var $action = null;
 
     protected function preDispatchType($action, ParameterBag $params)
@@ -23,6 +27,23 @@ class Misc extends XFCP_Misc
         }
 
         parent::assertNotBanned();
+    }
+
+    public function actionContact()
+    {
+        if ($this->isPost() && !$this->svRedirectInProgress)
+        {
+            return  $this->redirect($this->buildLink('login/contact'));
+        }
+
+        $reply = parent::actionContact();
+
+        if ($reply instanceof View && Globals::doLoginRedirect())
+        {
+            $reply->setParam('redirectToLoginController', 1);
+        }
+
+        return $reply;
     }
 
     protected function setupContactService()
