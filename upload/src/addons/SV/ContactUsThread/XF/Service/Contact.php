@@ -185,11 +185,11 @@ class Contact extends XFCP_Contact
                         $tokenEntity = $multipleAccountRepo->getTokenFromCookie($receivedToken);
                         if ($tokenEntity)
                         {
-                            $user = $tokenEntity->User;
-                            if ($user)
+                            $multiAccount = $tokenEntity->User;
+                            if ($multiAccount && $multiAccount->user_id != $user->user_id)
                             {
                                 // multi-account detected a user, when the user isn't logged in
-                                $input['multiAccount'] = $user;
+                                $input['multiAccount'] = $multiAccount;
                             }
                         }
                     }
