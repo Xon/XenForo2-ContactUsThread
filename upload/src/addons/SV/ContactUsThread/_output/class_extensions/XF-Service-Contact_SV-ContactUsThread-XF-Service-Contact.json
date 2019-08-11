@@ -1,6 +1,6 @@
 {
     "from_class": "XF\\Service\\Contact",
     "to_class": "SV\\ContactUsThread\\XF\\Service\\Contact",
-    "execute_order": 10,
+    "execute_order": 6244,
     "active": true
 }

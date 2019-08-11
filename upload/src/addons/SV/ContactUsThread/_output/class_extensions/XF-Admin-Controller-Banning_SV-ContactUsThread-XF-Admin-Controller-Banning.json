@@ -1,6 +1,6 @@
 {
     "from_class": "XF\\Admin\\Controller\\Banning",
     "to_class": "SV\\ContactUsThread\\XF\\Admin\\Controller\\Banning",
-    "execute_order": 10,
+    "execute_order": 6244,
     "active": true
 }
