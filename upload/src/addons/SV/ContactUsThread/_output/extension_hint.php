@@ -10,6 +10,7 @@ namespace SV\ContactUsThread\XF\Admin\Controller
 
 namespace SV\ContactUsThread\XF\Entity
 {
+	class XFCP_SpamTriggerLog extends \XF\Entity\SpamTriggerLog {}
 	class XFCP_User extends \XF\Entity\User {}
 }
 

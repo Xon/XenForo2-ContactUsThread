@@ -15,9 +15,10 @@
 	<xf:set var="$result" value="{$log.result}"/>
 </xf:if>
 <xf:set var="$userState"><xf:macro name="userState" arg-user="{$user}" /></xf:set>
-</xf:trim>[*]{{ date($log.log_date) }}: {{ $log.User ? ('@'. $log.User.username|raw . ' ' .$userState ) : phrase('unknown_account')|raw }} - {$result|raw}<xf:trim>
-<xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">({$detail|raw})</xf:foreach></xf:if>
-</xf:trim></xf:foreach></xf:trim>
+</xf:trim>
+[*]{{ date($log.log_date) }}: {{ $log.User ? ('@'. $log.User.username|raw . ' ' .$userState ) : phrase('unknown_account')|raw }} - {$result|raw}<xf:if is="is_array($log.details)"><xf:foreach loop="$log.details" value="$detail">
+{$detail|raw}</xf:foreach></xf:if>
+</xf:foreach></xf:trim>
 [/list]
 <xf:else />{{ phrase('sv_contactusthread_no_matching_spam_trigger_logs')|raw }}
 </xf:if><xf:trim>

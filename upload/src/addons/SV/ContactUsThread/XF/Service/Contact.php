@@ -2,6 +2,7 @@
 
 namespace SV\ContactUsThread\XF\Service;
 
+use SV\ContactUsThread\Globals;
 use XF\Mvc\Entity\AbstractCollection;
 use XF\Util\Ip;
 
@@ -285,7 +286,15 @@ class Contact extends XFCP_Contact
         $input = $this->getThreadPhraseInputs($forum, $user);
 
         $title = $input['subject'];
-        $message = \XF::app()->templater()->renderTemplate('public:svContactUs_message', $input);
+        Globals::$spamTriggerDetailsAsArray = true;
+        try
+        {
+            $message = \XF::app()->templater()->renderTemplate('public:svContactUs_message', $input);
+        }
+        finally
+        {
+            Globals::$spamTriggerDetailsAsArray = false;
+        }
 
         $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
             /** @var \XF\Service\Thread\Creator $creator */
