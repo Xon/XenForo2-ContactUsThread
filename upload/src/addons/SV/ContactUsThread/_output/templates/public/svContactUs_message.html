@@ -24,7 +24,7 @@
 </xf:if><xf:trim>
 
 <xf:macro name="userState" arg-user="!"><xf:trim><xf:if is="$user.user_id">
-	(<xf:macro name="userStatePhrase" arg-user="{$user}" /><xf:if is="!$user.is_banned"> - {{ phrase('user_is_banned') }}</xf:if>)
+	(<xf:macro name="userStatePhrase" arg-user="{$user}" /><xf:if is="$user.is_banned"> - {{ phrase('user_is_banned') }}</xf:if>)
 </xf:if></xf:trim></xf:macro>
 
 <xf:macro name="userStatePhrase" arg-user="!"><xf:trim>
