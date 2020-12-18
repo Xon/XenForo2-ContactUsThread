@@ -2,6 +2,7 @@
 
 namespace SV\ContactUsThread\Service\BannedEmails;
 
+use XF\Entity\BanEmail;
 use XF\Mvc\Entity\Entity;
 use XF\Service\AbstractXmlExport;
 
@@ -14,6 +15,7 @@ class Export extends AbstractXmlExport
 
     protected function exportEntry(Entity $entity, \DOMElement $node)
     {
+        /** @var BanEmail $entity */
         $reasonNode = $node->ownerDocument->createElement('reason');
         $this->exportCdata($reasonNode, $entity->reason);
         $node->appendChild($reasonNode);

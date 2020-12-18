@@ -88,12 +88,18 @@ class Banning extends XFCP_Banning
     public function actionEmailsContactExport()
     {
         $bannedEmails = $this->getSvBanningRepo()->findEmailBans();
-        return $this->plugin('XF:Xml')->actionExport($bannedEmails, 'SV\ContactUsThread:BannedEmails\Export');
+        /** @var \XF\ControllerPlugin\Xml $xmlPlugin */
+        $xmlPlugin = $this->plugin('XF:Xml');
+
+        return $xmlPlugin->actionExport($bannedEmails, 'SV\ContactUsThread:BannedEmails\Export');
     }
 
     public function actionEmailsContactImport()
     {
-        return $this->plugin('XF:Xml')->actionImport('banning/emails-contact', 'banned_emails', 'SV\ContactUsThread:BannedEmails\Import');
+        /** @var \XF\ControllerPlugin\Xml $xmlPlugin */
+        $xmlPlugin = $this->plugin('XF:Xml');
+
+        return $xmlPlugin->actionImport('banning/emails-contact', 'banned_emails', 'SV\ContactUsThread:BannedEmails\Import');
     }
 
     /**

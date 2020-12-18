@@ -23,7 +23,6 @@ class Import extends AbstractXmlImport
                 continue;
             }
 
-            /** @noinspection PhpUndefinedFieldInspection */
             $repo->banEmail(
                 (string)$entry['banned_email'],
                 \XF\Util\Xml::processSimpleXmlCdata($entry->reason)
