@@ -207,21 +207,36 @@ class Contact extends XFCP_Contact
             }
 
             $creator = \XF::asVisitor($user, function () use ($forum, $title, $message) {
-                /** @var \XF\Service\Thread\Creator $creator */
-                $creator = $this->service('XF:Thread\Creator', $forum);
-                $creator->setPerformValidations(false);
+                $creator = $this->setupThreadCreate($forum);
                 $creator->setContent($title, $message);
-                $defaultPrefix = isset($forum->sv_default_prefix_ids) ? $forum->sv_default_prefix_ids : $forum->default_prefix_id;
-                if ($defaultPrefix)
-                {
-                    $creator->setPrefix($defaultPrefix);
-                }
+
                 $creator->save();
 
                 return $creator;
             });
-            $creator->sendNotifications();
+
+            $this->finalizeThreadCreate($creator);
         }
+    }
+
+    protected function setupThreadCreate(\XF\Entity\Forum $forum)
+    {
+        /** @var \XF\Service\Thread\Creator $creator */
+        $creator = $this->service('XF:Thread\Creator', $forum);
+        $creator->setPerformValidations(false);
+
+        $defaultPrefix = isset($forum->sv_default_prefix_ids) ? $forum->sv_default_prefix_ids : $forum->default_prefix_id;
+        if ($defaultPrefix)
+        {
+                $creator->setPrefix($defaultPrefix);
+        }
+
+        return $creator;
+    }
+
+    protected function finalizeThreadCreate(\XF\Service\Thread\Creator $creator)
+    {
+        $creator->sendNotifications();
     }
 
     /**
