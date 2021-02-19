@@ -228,7 +228,7 @@ class Contact extends XFCP_Contact
         $defaultPrefix = isset($forum->sv_default_prefix_ids) ? $forum->sv_default_prefix_ids : $forum->default_prefix_id;
         if ($defaultPrefix)
         {
-                $creator->setPrefix($defaultPrefix);
+            $creator->setPrefix($defaultPrefix);
         }
 
         return $creator;
