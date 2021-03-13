@@ -37,8 +37,6 @@ class Login extends XFCP_Login
         }
         /** @var Misc $controller */
         $controller = \XF::app()->controller('XF:Misc', $this->request);
-
-        $controller->svRedirectInProgress = true;
         return $controller->actionContact();
     }
 }

@@ -5,12 +5,12 @@ namespace SV\ContactUsThread\XF\Pub\Controller;
 use SV\ContactUsThread\Globals;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\View;
+use XF\Mvc\Reply\Redirect as RedirectReply;
+use XF\Phrase;
 use XF\Util\Ip;
 
 class Misc extends XFCP_Misc
 {
-    /** @var bool */
-    public $svRedirectInProgress = false;
     var $action = null;
 
     protected function preDispatchType($action, ParameterBag $params)
@@ -31,16 +31,19 @@ class Misc extends XFCP_Misc
 
     public function actionContact()
     {
-        if ($this->isPost() && !$this->svRedirectInProgress)
-        {
-            return  $this->redirect($this->buildLink('login/contact'));
-        }
-
         $reply = parent::actionContact();
 
         if ($reply instanceof View && Globals::doLoginRedirect())
         {
             $reply->setParam('redirectToLoginController', 1);
+        }
+        else if ($this->isPost() && $reply instanceof RedirectReply && Globals::doLoginRedirect())
+        {
+            $redirectMessage = $reply->getMessage();
+            if ($redirectMessage instanceof Phrase && $redirectMessage->getName() === 'your_message_has_been_sent')
+            {
+                $reply->setUrl($this->buildLink('login/contact'));
+            }
         }
 
         return $reply;
