@@ -35,8 +35,7 @@ class Login extends XFCP_Login
         {
             return $this->notFound();
         }
-        /** @var Misc $controller */
-        $controller = \XF::app()->controller('XF:Misc', $this->request);
-        return $controller->actionContact();
+
+        return $this->rerouteController('XF:Misc', 'contact');
     }
 }
