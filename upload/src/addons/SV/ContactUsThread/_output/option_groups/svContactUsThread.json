@@ -1,5 +1,6 @@
 {
     "icon": "fa-envelope-open",
     "display_order": 52,
+    "advanced": false,
     "debug_only": false
 }
