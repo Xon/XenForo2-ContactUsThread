@@ -33,16 +33,19 @@ class Misc extends XFCP_Misc
     {
         $reply = parent::actionContact();
 
-        if ($reply instanceof View && Globals::doLoginRedirect())
+        if (Globals::doLoginRedirect())
         {
-            $reply->setParam('redirectToLoginController', 1);
-        }
-        else if ($this->isPost() && $reply instanceof RedirectReply && Globals::doLoginRedirect())
-        {
-            $redirectMessage = $reply->getMessage();
-            if ($redirectMessage instanceof Phrase && $redirectMessage->getName() === 'your_message_has_been_sent')
+            if ($reply instanceof View)
             {
-                $reply->setUrl($this->buildLink('login/contact'));
+                $reply->setParam('redirectToLoginController', 1);
+            }
+            else if ($this->isPost() && $reply instanceof RedirectReply)
+            {
+                $redirectMessage = $reply->getMessage();
+                if ($redirectMessage instanceof Phrase && $redirectMessage->getName() === 'your_message_has_been_sent')
+                {
+                    $reply->setUrl($this->buildLink('login/contact'));
+                }
             }
         }
 
