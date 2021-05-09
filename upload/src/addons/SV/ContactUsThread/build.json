@@ -1,4 +1,6 @@
 {
-  "additional_files": [
+  "exec": [
+    "rm -rf _build/upload/src/addons/{addon_id}/Cli/Command/Seed",
+    "rm -rf _build/upload/src/addons/{addon_id}/Seed"
   ]
 }

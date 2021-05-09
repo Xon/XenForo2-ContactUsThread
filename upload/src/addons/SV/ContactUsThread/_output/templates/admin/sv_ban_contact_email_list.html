@@ -9,6 +9,38 @@
 	</div>
 </xf:pageaction>
 
+<xf:css src="sv_ban_contact_email_list.less" />
+
+<xf:form action="{{ link('banning/emails-contact') }}" class="block">
+	<div class="block-outer">
+		<div class="filterBlock filterBlock--noFloat">
+			<ul class="listInline">
+				<li><xf:textbox name="banned_email" value="{$filters.banned_email}"
+								class="filterBlock-input filterBlock-input--small"
+								placeholder="{{ phrase('svContactUsThread_banned_email...') }}" /></li>
+				
+				<li><xf:textbox name="creators" value="{$creatorsFilter}"
+								class="filterBlock-input filterBlock-input--small"
+								placeholder="{{ phrase('svContactUsThread_banned_by...') }}"
+								data-xf-init="auto-complete" /></li>
+
+				<li><xf:textbox name="reason" value="{$filters.reason}"
+								class="filterBlock-input filterBlock-input--small"
+								placeholder="{{ phrase('reason...') }}" /></li>
+
+				<li style="display: inline-block; vertical-align: bottom"><xf:trim>
+					<xf:dateinput name="create_date_start" placeholder="{{ phrase('svContactUsThread_create_date_start') }}"
+								  value="{{ $filters.create_date_start ? date($filters.create_date_start, 'Y-m-d') : '' }}"
+								  class="filterBlock-input filterBlock-input--small" />
+				</xf:trim></li>
+				<li>
+					<xf:button type="submit" name="apply" value="1">{{ phrase('filter') }}</xf:button>
+				</li>
+			</ul>
+		</div>
+	</div>
+</xf:form>
+
 <xf:if is="$emailBans is not empty">
 	<xf:form action="{{ link('banning/emails-contact/delete') }}" ajax="true" class="block">
 		<div class="block-container">
